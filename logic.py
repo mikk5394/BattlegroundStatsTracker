@@ -141,7 +141,7 @@ class SeeStats:
         # retrieving placement data to get average
         c.execute("SELECT Placement FROM stats")
         rows2 = c.fetchall()
-        average = sum(pair[0] for pair in rows2) / len(rows)
+        average = sum(pair[0] for pair in rows2) / len(rows2)
 
         # getting all 1st placements
         c.execute(f"SELECT Placement FROM stats where Placement = 1")
