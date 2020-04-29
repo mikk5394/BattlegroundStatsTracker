@@ -1,10 +1,7 @@
 import tkinter as tk
 import glob
-import numpy as np
-
 from PIL import Image, ImageTk
 import sqlite3
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
@@ -15,9 +12,7 @@ hero_names = []
 # setting up connection with sqlite db
 connect = sqlite3.connect('BGTracking.db')
 c = connect.cursor()
-
-
-# c.execute("CREATE TABLE stats (hero_id int, Placement int, Rating)")
+c.execute('CREATE TABLE IF NOT EXISTS stats (hero_id INTEGER, Placement INTEGER, Rating INTEGER)')
 
 
 class SelectHero:
@@ -33,6 +28,7 @@ class SelectHero:
 
         r = 0
         c = 0
+
         for i in range(0, len(images)):
             btns.append(tk.Button(self.frame, text=i, image=images[i],
                                   command=lambda p=i: self.hero_selected_window(p)).grid(row=r, column=c))
@@ -124,50 +120,57 @@ class SeeStats:
         self.master = master
         self.master.title('Rating graph')
         self.master.resizable(False, False)
-        self.frame = tk.Frame(master)
+        self.frame = tk.Frame(self.master)
         self.frame.config(bg='white')
         self.frame.pack()
-
-        # retrieving data from sqlite to plot into a graph
-        c.execute("SELECT Rating FROM stats")
-        rows = c.fetchall()
-        first_rating = str(rows[0])
-        current_rating = str(rows[-1])
-        difference = int(current_rating[1:-2]) - int(first_rating[1:-2])
-
-        if difference > 0:
-            difference = "+" + str(difference)
-
-        # retrieving placement data to get average
-        c.execute("SELECT Placement FROM stats")
-        rows2 = c.fetchall()
-        average = sum(pair[0] for pair in rows2) / len(rows2)
-
-        # getting all 1st placements
-        c.execute(f"SELECT Placement FROM stats where Placement = 1")
-        rows_1st = c.fetchall()
-
-        label = tk.Label(self.frame, text="Number of games played: " + str(len(rows))
-                                          + "\n Number of 1st places: " + str(len(rows_1st))
-                                          + "\n Average placement: " + str(round(average, 2))
-                                          + "\n\n First recorded rating: " + first_rating[1:-2]
-                                          + "\n Current rating: " + current_rating[1:-2]
-                                          + "\n Difference: " + str(difference),
-                         bg='white', font=("44")).grid(pady=(15, 0))
 
         f = Figure(figsize=(7, 7), dpi=100)
         a = f.add_subplot(111)
 
-        # spaghetti way to make the x axis display the correct number of games played - list starts at 0 but I need
-        # the x axis to start at 1. Duplicating the first index and inserting it in front of it - then setting to
-        # graph to start at 1, ignoring the 0th index.
-        filler = (rows[0])
-        rows.insert(0, filler)
+        # retrieving data from sqlite to plot into a graph
+        c.execute("SELECT Rating FROM stats")
+        rows = c.fetchall()
 
-        a.plot(rows)
-        a.margins(0)
+        # shows the user an empty graph if there's no data to display
+        if len(rows) != 0:
+            first_rating = str(rows[0])
+            current_rating = str(rows[-1])
+            difference = int(current_rating[1:-2]) - int(first_rating[1:-2])
+
+            if difference > 0:
+                difference = "+" + str(difference)
+
+            # retrieving placement data to get average
+            c.execute("SELECT Placement FROM stats")
+            rows2 = c.fetchall()
+            average = sum(pair[0] for pair in rows2) / len(rows2)
+
+            # getting all 1st placements
+            c.execute(f"SELECT Placement FROM stats where Placement = 1")
+            rows_1st = c.fetchall()
+
+            label = tk.Label(self.frame, text="Number of games played: " + str(len(rows))
+                                              + "\n Number of 1st places: " + str(len(rows_1st))
+                                              + "\n Average placement: " + str(round(average, 2))
+                                              + "\n\n First recorded rating: " + first_rating[1:-2]
+                                              + "\n Current rating: " + current_rating[1:-2]
+                                              + "\n Difference: " + str(difference),
+                             bg='white', font=("44")).grid(pady=(15, 0))
+
+            # spaghetti way to make the x axis display the correct number of games played - list starts at 0 but I need
+            # the x axis to start at 1. Duplicating the first index and inserting it in front of it - then setting to
+            # graph to start at 1, ignoring the 0th index.
+
+            filler = (rows[0])
+            rows.insert(0, filler)
+
+            a.plot(rows)
+            a.margins(0)
+            a.set_xlim(xmin=1)
+        else:
+            a.plot(0)
+
         a.grid()
-        a.set_xlim(xmin=1)
 
         canvas = FigureCanvasTkAgg(f, self.frame)
         canvas.get_tk_widget().grid()
