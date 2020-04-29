@@ -131,24 +131,28 @@ class SeeStats:
         # retrieving data from sqlite to plot into a graph
         c.execute("SELECT Rating FROM stats")
         rows = c.fetchall()
+        first_rating = str(rows[0])
         current_rating = str(rows[-1])
+        difference = int(current_rating[1:-2]) - int(first_rating[1:-2])
 
-        # getting all placements and finding average
-        c.execute(f"SELECT Placement FROM stats")
+        if difference > 0:
+            difference = "+" + str(difference)
+
+        # retrieving placement data to get average
+        c.execute("SELECT Placement FROM stats")
         rows2 = c.fetchall()
-        average_placement = sum([pair[0] for pair in rows2]) / len(rows2)
-        rounded_average = float("{:.2f}".format(average_placement))
+        average = sum(pair[0] for pair in rows2) / len(rows)
 
-        # calculating winrate (top >= 4 placements)
-        c.execute(f"SELECT Placement FROM stats where Placement <= 4")
-        wins = c.fetchall()
-        win_rate = (len(wins) / len(rows2)) * 100
-        rounded_winrate = float("{:.2f}".format(win_rate))
+        # getting all 1st placements
+        c.execute(f"SELECT Placement FROM stats where Placement = 1")
+        rows_1st = c.fetchall()
 
-        label = tk.Label(self.frame, text="Total average placement for all heroes: " + str(rounded_average)
-                                          + "\n Number of games played: " + str(len(rows))
-                                          + "\n Winrate: " + str(rounded_winrate) + "%"
-                                          + "\n Current rating: " + current_rating[1:-2],
+        label = tk.Label(self.frame, text="Number of games played: " + str(len(rows))
+                                          + "\n Number of 1st places: " + str(len(rows_1st))
+                                          + "\n Average placement: " + str(round(average, 2))
+                                          + "\n\n First recorded rating: " + first_rating[1:-2]
+                                          + "\n Current rating: " + current_rating[1:-2]
+                                          + "\n Difference: " + str(difference),
                          bg='white', font=("44")).grid(pady=(15, 0))
 
         f = Figure(figsize=(7, 7), dpi=100)
