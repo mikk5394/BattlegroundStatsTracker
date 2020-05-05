@@ -198,7 +198,7 @@ class HeroStats:
         hero_number_of_games = []
 
         # each pic in the list represents one hero, aka it has the total number of unique heroes
-        for hero_id in range(0, len(images)):
+        for hero_id in range(0, len(hero_names)):
             c.execute(f"SELECT * FROM stats WHERE hero_id = {hero_id}")
             rows = c.fetchall()
             # storing number of games with each hero to find the average placement for each hero
@@ -211,30 +211,23 @@ class HeroStats:
                 number_of_games += 1
 
             if number_of_games == 0:
-                hero_data.append(0)
+                hero_data.append((hero_names[hero_id], 0, 0))
             else:
                 average_placement = (placement / number_of_games)
-                # heroes comes in sorted order so no need to store the id with the placement
-                hero_data.append(average_placement)
+                hero_data.append((hero_names[hero_id], average_placement, number_of_games))
 
-            # need to store number of games played for each hero
-            hero_number_of_games.append(number_of_games)
+        # sorting the list so the bar chart looks nicer
+        hero_data.sort(key=lambda plc: plc[1], reverse=True)
 
-        # have to merge hero name + number of games together to display on the x-axis
+        a.set_xticklabels([val[0] + f"-{val[2]}" for val in hero_data], rotation=45, horizontalalignment='right')
 
-        merged = [(hero_names[i], hero_number_of_games[i]) for i in range(0, len(hero_names))]
-        formatted_merge = []
-        for x in merged:
-            formatted_merge.append(x[0] + "-" + str(x[1]))
+        # formatting
+        for i, (n, p, g) in enumerate(hero_data):
+            rounded_p = float("{:.1f}".format(p))
+            if p > 0:
+                a.text(i-0.4, p+0.1, str(rounded_p), color='blue', fontweight='bold')
 
-        a.set_xticklabels(formatted_merge, rotation=45, horizontalalignment='right')
-
-        for i, v in enumerate(hero_data):
-            rounded_v = float("{:.2f}".format(v))
-            if v > 0:
-                a.text(i-0.4, v+0.1, str(rounded_v), color='blue', fontweight='bold')
-
-        bar_chart = a.bar([i for i in range(0, 34)], hero_data, 0.8)
+        bar_chart = a.bar(range(len(hero_names)), [val[1] for val in hero_data], 0.7)
 
         canvas = FigureCanvasTkAgg(f, self.master)
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
