@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/BattlegroundStats.iml" filepath="$PROJECT_DIR$/.idea/BattlegroundStats.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../BattlegroundsTracker/.idea/BattlegroundsTracker.iml" filepath="$PROJECT_DIR$/../BattlegroundsTracker/.idea/BattlegroundsTracker.iml" />
     </modules>
   </component>
 </project>
