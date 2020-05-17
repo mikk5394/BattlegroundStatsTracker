@@ -252,12 +252,14 @@ def main():
     root.title('Battlegrounds Tracking')
 
     # changing directory to the place where the script is being executed - can locate the pictures this way
-    os.chdir(sys.path[0])
-    path = os.path.dirname(os.path.abspath(__file__)) + r"\BGpics"
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+    path = dname + r"\BGpics"
 
     # saving all image portraits to a list
     for img_name in glob.glob(path + "/*.png"):
-        print(img_name)
+
         hero = img_name.split(path, 1)[1]
         if hero[1:-4] == "LK":
             hero_names.append(hero[1:-4].upper())
