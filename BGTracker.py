@@ -35,15 +35,15 @@ class SelectHero:
             btns.append(tk.Button(self.frame, text=i, image=images[i],
                                   command=lambda p=i: self.hero_selected_window(p)).grid(row=r, column=c))
             c += 1
-            if c == 9:  # start a new row before the current row exceeds 9 heroes
+            if c == 8:  # start a new row before the current row exceeds 9 heroes
                 c = 0
                 r += 1
 
         # additional options for the player
-        stats = tk.Button(self.frame, text="Rating Graph", command=lambda: self.see_stats()).grid(row=3, column=7,
+        stats = tk.Button(self.frame, text="Rating Graph", command=lambda: self.see_stats()).grid(row=4, column=6,
                                                                                                   pady=(0, 0))
-        hero_stats = tk.Button(self.frame, text="Hero Stats", command=lambda: self.see_hero_stats()).grid(row=3,
-                                                                                                          column=8,
+        hero_stats = tk.Button(self.frame, text="Hero Stats", command=lambda: self.see_hero_stats()).grid(row=4,
+                                                                                                          column=7,
                                                                                                           pady=(0, 0))
 
         # have to handle the resizing first that comes with importing the pictures onto the buttons, else it wont work
@@ -192,7 +192,7 @@ class HeroStats:
         f = Figure(figsize=(15, 8), dpi=100)
         a = f.add_subplot(111)
         a.set_ylabel("Average placement")
-        a.set_xticks([i for i in range(0, 34)])
+        a.set_xticks([i for i in range(0, 37)])
 
         hero_data = []
         hero_number_of_games = []
@@ -257,10 +257,16 @@ def main():
 
     # saving all image portraits to a list
     for img_name in glob.glob(path + "/*.png"):
-
+        print(img_name)
         hero = img_name.split(path, 1)[1]
         if hero[1:-4] == "LK":
             hero_names.append(hero[1:-4].upper())
+        elif hero[1:4] == "yyK":
+            hero_names.append("Kael'thas")
+        elif hero[1:4] == "yyM":
+            hero_names.append("Maeiv")
+        elif hero[1:4] == "yyV":
+            hero_names.append("Vashj")
         else:
             hero_names.append(hero[1:-4].capitalize())
 
