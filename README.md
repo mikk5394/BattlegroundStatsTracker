@@ -7,4 +7,4 @@ Pictures:
 https://imgur.com/a/s7x6JGS
 
 Video walkthrough: 
-https://www.youtube.com/watch?v=7-9tnSrRp1o&t=
+https://www.youtube.com/watch?v=7-9tnSrRp1o&t
