@@ -35,15 +35,15 @@ class SelectHero:
             btns.append(tk.Button(self.frame, text=i, image=images[i],
                                   command=lambda p=i: self.hero_selected_window(p)).grid(row=r, column=c))
             c += 1
-            if c == 8:  # start a new row before the current row exceeds 9 heroes
+            if c == 9:  # start a new row before the current row exceeds 10 heroes
                 c = 0
                 r += 1
 
         # additional options for the player
-        stats = tk.Button(self.frame, text="Rating Graph", command=lambda: self.see_stats()).grid(row=4, column=6,
+        stats = tk.Button(self.frame, text="Rating Graph", command=lambda: self.see_stats()).grid(row=4, column=7,
                                                                                                   pady=(0, 0))
         hero_stats = tk.Button(self.frame, text="Hero Stats", command=lambda: self.see_hero_stats()).grid(row=4,
-                                                                                                          column=7,
+                                                                                                          column=8,
                                                                                                           pady=(0, 0))
 
         # have to handle the resizing first that comes with importing the pictures onto the buttons, else it wont work
@@ -192,7 +192,7 @@ class HeroStats:
         f = Figure(figsize=(15, 8), dpi=100)
         a = f.add_subplot(111)
         a.set_ylabel("Average placement")
-        a.set_xticks([i for i in range(0, 37)])
+        a.set_xticks([i for i in range(0, 41)])
 
         hero_data = []
         hero_number_of_games = []
@@ -269,6 +269,16 @@ def main():
             hero_names.append("Maeiv")
         elif hero[1:4] == "yyV":
             hero_names.append("Vashj")
+        elif hero[1:5] == "yyyP":
+            hero_names.append("Patches")
+        elif hero[1:5] == "yyyH":
+            hero_names.append("Hooktusk")
+        elif hero[1:5] == "yyyE":
+            hero_names.append("Eudora")
+        elif hero[1:5] == "yyyA":
+            hero_names.append("Aranna")
+        elif hero[1:5] == "yyyS":
+            hero_names.append("Skycap")
         else:
             hero_names.append(hero[1:-4].capitalize())
 
